@@ -1,0 +1,24 @@
+{
+  "name": "@mukurowz/claude-skills",
+  "version": "1.0.0",
+  "description": "Personal, cross-project [Claude Code](https://claude.com/claude-code) skills. Lives in its own repo so it syncs across every device.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MukurowZ/claude-skills.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MukurowZ/claude-skills/issues"
+  },
+  "homepage": "https://github.com/MukurowZ/claude-skills#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
