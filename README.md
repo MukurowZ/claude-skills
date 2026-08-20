@@ -10,6 +10,7 @@ its own repo so it syncs across every device.
 - **create-branch** — branch named `<type>/<slug>` (conventional-commit types); pushes to its own same-name remote branch, never the base.
 - **create-pull-request** — PR whose base is the branch's real ancestor (reflog / merge-base detected); draft or ready (default ready).
 - **html-to-pug-vue** — convert HTML → Pug with Vue directive support.
+- **knowledge-vault** — bootstrap + resolve a centralized, namespaced planning-artifact vault shared across repos (`vault.js init|locate|resolve`); namespace isolation keeps unrelated clients apart.
 - **opus-worker-fable-advisor** — advisor skill.
 - **react-classname-extract** — add a filename-derived semantic root `className` to every React component.
 - **wayfinder-next** — spawn one background task chip per wayfinder ticket (`#RR-LNN-<short title>`), with run-counter allocation, blocker/claim validation, and self-contained kickoff prompts.

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal, cross-project Claude Code skills. Each top-level directory is one skill: a `SKILL.md` (required, loaded by the Skill tool) plus optional reference/template/example files the skill points to. There is no application code, build step, or test suite — this is a documentation/prompt repo, and `package.json`'s `test` script is a placeholder only.
+Personal, cross-project Claude Code skills. Each top-level directory is one skill: a `SKILL.md` (required, loaded by the Skill tool) plus optional reference/template/example files the skill points to. Mostly a documentation/prompt repo with no build step; the exceptions are `bin/install.js` (the installer) and `knowledge-vault/vault.js` (the one skill that ships code) — `npm test` runs the latter's suite (`knowledge-vault/test.sh`).
 
 ## Commands
 
@@ -24,6 +24,7 @@ npm publish            # publish current working tree to npm as @mukurowz/claude
 
 1. Add/edit `<skill-name>/SKILL.md` (frontmatter: `name` + `description`; description drives when Claude auto-loads it — see any existing SKILL.md for the pattern of concrete triggers/symptoms).
 2. Put heavy reference material or reusable templates in sibling files under the skill dir (e.g. `amigos/TEMPLATE.md`, `amigos/references/*.md`), not inline in SKILL.md.
+   `knowledge-vault/` is the one skill with code (`vault.js`, zero-dep Node) and tests (`npm test` → `knowledge-vault/test.sh`); run `npm test` before publishing whenever it changes.
 3. `git add`, commit.
 4. `./install.sh` locally to pick it up; other devices run `git pull && ./install.sh`.
 

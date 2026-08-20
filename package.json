@@ -1,6 +1,6 @@
 {
   "name": "@mukurowz/claude-skills",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Personal, cross-project [Claude Code](https://claude.com/claude-code) skills. Lives in its own repo so it syncs across every device.",
   "main": "index.js",
   "bin": {

@@ -12,10 +12,11 @@ different freelance clients) never see each other.
 ## Resolve first — one call, obey the output
 
 ```
-node <this-skill-dir>/vault.js resolve [--repo <name>]
+node <this-skill-dir>/vault.js resolve [repo-path] [--repo <name>]
 ```
 
-Run once per session before any planning write. The JSON is authoritative:
+Run once per session before any planning write, from the repo's directory (or pass the
+repo path explicitly when your cwd is elsewhere). The JSON is authoritative:
 
 | field | meaning |
 |---|---|
