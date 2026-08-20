@@ -115,7 +115,26 @@ function cmdResolve(args) {
   if (!vault) die('no vault found — run: vault.js init <path>');
   const cfg = loadConfig(vault);
   const namespace = matchNamespace(cfg, repoPath);
-  process.stdout.write(JSON.stringify({ vault, namespace, repo: repoName || path.basename(repoPath) }, null, 2) + '\n');
+  const withSep = (p) => p.endsWith(path.sep) ? p : p + path.sep;
+  const cur = cfg.namespaces[namespace];
+  const related = cur.related || [];
+  const dirOf = (n) => withSep(nsDir(vault, n, cfg.namespaces[n]));
+  const writeRoot = dirOf(namespace);
+  const readRoots = [...new Set([writeRoot, ...related.map(dirOf)])];
+  // excludeRoots: dirs of namespaces that are neither current nor related AND sit
+  // strictly under some read root. Deepest-match rule: such a dir is a deeper match
+  // than the read root above it, so its contents belong to the excluded namespace.
+  const excludeRoots = Object.keys(cfg.namespaces)
+    .filter((n) => n !== namespace && !related.includes(n))
+    .map(dirOf)
+    .filter((d) => readRoots.some((r) => d !== r && d.startsWith(r)))
+    .sort();
+  const repo = repoName || path.basename(repoPath);
+  process.stdout.write(JSON.stringify({
+    vault, namespace, repo,
+    effortDirPattern: path.join(writeRoot, repo, '<effort>') + path.sep,
+    writeRoot, readRoots, excludeRoots, related,
+  }, null, 2) + '\n');
 }
 
 const [cmd, ...rest] = process.argv.slice(2);

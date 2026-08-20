@@ -72,4 +72,31 @@ fresh
 node -e "const f='$ROOT/work/vault/.vault.json',c=JSON.parse(require('fs').readFileSync(f)); c.namespaces['work2']={dir:'.',roots:['$ROOT/nowhere']}; require('fs').writeFileSync(f, JSON.stringify(c))"
 t "duplicate namespace dir errors" 1 "share dir" "$ROOT/work/repo-a" resolve
 
+# --- resolve: visibility (spec walkthrough cases) ---
+fresh
+# prime the locate cache: the vault is NOT an ancestor-level sibling of the freelance
+# repos, so resolve from them depends on the cached pointer (same as real usage after
+# one locate from anywhere near the vault).
+( cd "$ROOT/work/repo-a" && HOME="$FAKEHOME" node "$VJS" locate >/dev/null )
+# J: resolve, then strip spaces+newlines so exact JSON arrays match with a line-based grep -F
+J() { ( cd "$1" && HOME="$FAKEHOME" node "$VJS" resolve "${@:2}" ) | tr -d ' \n'; }
+chk() { # chk <name> <haystack> <fixed-needle>
+  if echo "$2" | grep -qF "$3"; then PASS=$((PASS+1)); echo "ok   $1"
+  else FAIL=$((FAIL+1)); echo "FAIL $1"; echo "     want: $3"; echo "     got:  $2"; fi
+}
+V="$ROOT/work/vault"
+A="$(J "$ROOT/freelance/client-a/acme-api")"
+chk "client-a writeRoot"          "$A" "\"writeRoot\":\"$V/client-a/\""
+chk "client-a readRoots exact"    "$A" "\"readRoots\":[\"$V/client-a/\",\"$V/\"]"
+chk "client-a excludeRoots exact" "$A" "\"excludeRoots\":[\"$V/client-b/\",\"$V/default/\"]"
+B="$(J "$ROOT/freelance/client-b/beta-app")"
+chk "client-b readRoots exact"    "$B" "\"readRoots\":[\"$V/client-b/\"]"
+chk "client-b empty excludeRoots" "$B" "\"excludeRoots\":[]"
+# regression (spec Testing #1): default keeps own dir readable despite dir:"." namespace
+D="$(J "$ROOT/elsewhere/stray-repo")"
+chk "default readRoots exact"     "$D" "\"readRoots\":[\"$V/default/\"]"
+chk "default empty excludeRoots"  "$D" "\"excludeRoots\":[]"
+W="$(J "$ROOT/work/repo-a" --repo myrepo)"
+chk "--repo override"             "$W" "myrepo/<effort>/"
+
 echo; echo "$PASS passed, $FAIL failed"; [ "$FAIL" -eq 0 ]
