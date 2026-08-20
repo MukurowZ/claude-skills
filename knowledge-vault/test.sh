@@ -52,4 +52,24 @@ fresh
 mkdir -p "$ROOT/work/vault2" && cp "$ROOT/work/vault/.vault.json" "$ROOT/work/vault2/.vault.json"
 t "locate errors on same-level tie"                 1 "multiple vaults" "$ROOT/work/repo-a" locate
 
+# --- resolve: namespace matching ---
+fresh
+t "resolve maps work repo"        0 '"namespace": "work"'      "$ROOT/work/repo-a" resolve
+t "resolve maps client-a repo"    0 '"namespace": "client-a"'  "$ROOT/freelance/client-a/acme-api" resolve
+t "resolve maps client-b repo"    0 '"namespace": "client-b"'  "$ROOT/freelance/client-b/beta-app" resolve
+# unmatched repo: needs cache so locate works from outside the tree
+( cd "$ROOT/work/repo-a" && HOME="$FAKEHOME" node "$VJS" locate >/dev/null )
+t "resolve unmatched -> default"  0 '"namespace": "default"'   "$ROOT/elsewhere/stray-repo" resolve
+# no default: remove it -> error
+node -e "const f='$ROOT/work/vault/.vault.json',c=JSON.parse(require('fs').readFileSync(f)); delete c.namespaces.default; require('fs').writeFileSync(f, JSON.stringify(c))"
+t "resolve unmatched no-default errors" 1 "add a roots entry" "$ROOT/elsewhere/stray-repo" resolve
+# equal-length prefix tie -> error
+fresh
+node -e "const f='$ROOT/work/vault/.vault.json',c=JSON.parse(require('fs').readFileSync(f)); c.namespaces['work-dup']={roots:['$ROOT/work']}; require('fs').writeFileSync(f, JSON.stringify(c))"
+t "resolve equal-prefix tie errors" 1 "ambiguous" "$ROOT/work/repo-a" resolve
+# duplicate dir validation
+fresh
+node -e "const f='$ROOT/work/vault/.vault.json',c=JSON.parse(require('fs').readFileSync(f)); c.namespaces['work2']={dir:'.',roots:['$ROOT/nowhere']}; require('fs').writeFileSync(f, JSON.stringify(c))"
+t "duplicate namespace dir errors" 1 "share dir" "$ROOT/work/repo-a" resolve
+
 echo; echo "$PASS passed, $FAIL failed"; [ "$FAIL" -eq 0 ]

@@ -62,6 +62,63 @@ function cmdLocate() {
   process.stdout.write(vault + '\n');
 }
 
+function nsDir(vault, name, ns) { return path.resolve(vault, ns.dir === undefined ? name : ns.dir); }
+
+function loadConfig(vault) {
+  let cfg;
+  try { cfg = JSON.parse(fs.readFileSync(path.join(vault, MARKER), 'utf8')); }
+  catch (e) { die(`cannot parse ${path.join(vault, MARKER)}: ${e.message}`); }
+  if (cfg.kind !== 'claude-vault') die(`${MARKER} missing "kind": "claude-vault"`);
+  const names = Object.keys(cfg.namespaces || {});
+  if (names.length === 0) die('no namespaces configured in ' + MARKER);
+  const seenDirs = new Map();
+  for (const n of names) {
+    const d = nsDir(vault, n, cfg.namespaces[n]);
+    if (seenDirs.has(d)) die(`namespaces "${seenDirs.get(d)}" and "${n}" share dir ${d} — give each namespace its own dir`);
+    seenDirs.set(d, n);
+    for (const r of cfg.namespaces[n].related || []) {
+      if (!cfg.namespaces[r]) die(`namespace "${n}" lists unknown related namespace "${r}"`);
+    }
+  }
+  return cfg;
+}
+
+// Longest-prefix match; "**" is the only glob (catch-all, always least specific).
+function matchNamespace(cfg, repoPath) {
+  const rp = realpathIfExists(repoPath);
+  let best = null, bestLen = -1, tieWith = null, catchall = null;
+  for (const [name, ns] of Object.entries(cfg.namespaces)) {
+    for (const r of ns.roots || []) {
+      if (r === '**') { if (catchall === null) catchall = name; continue; }
+      const root = realpathIfExists(expandTilde(r));
+      if (rp === root || rp.startsWith(root + path.sep)) {
+        if (root.length > bestLen) { best = name; bestLen = root.length; tieWith = null; }
+        else if (root.length === bestLen && name !== best) tieWith = name;
+      }
+    }
+  }
+  if (tieWith) die(`ambiguous: namespaces "${best}" and "${tieWith}" both match ${rp} with equal-length roots`);
+  if (best) return best;
+  if (catchall) return catchall;
+  die(`no namespace matches ${rp} — add a roots entry for ${rp} to ${MARKER}`);
+}
+
+function cmdResolve(args) {
+  let repoName = null;
+  const positional = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--repo') { repoName = args[++i] || die('--repo needs a value'); }
+    else positional.push(args[i]);
+  }
+  const repoPath = path.resolve(positional[0] || process.cwd());
+  const vault = locate(repoPath);
+  if (!vault) die('no vault found — run: vault.js init <path>');
+  const cfg = loadConfig(vault);
+  const namespace = matchNamespace(cfg, repoPath);
+  process.stdout.write(JSON.stringify({ vault, namespace, repo: repoName || path.basename(repoPath) }, null, 2) + '\n');
+}
+
 const [cmd, ...rest] = process.argv.slice(2);
 if (cmd === 'locate') cmdLocate();
+else if (cmd === 'resolve') cmdResolve(rest);
 else die('usage: vault.js init <path> | locate | resolve [repo-path] [--repo <name>]');
