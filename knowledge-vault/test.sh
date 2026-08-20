@@ -99,4 +99,17 @@ chk "default empty excludeRoots"  "$D" "\"excludeRoots\":[]"
 W="$(J "$ROOT/work/repo-a" --repo myrepo)"
 chk "--repo override"             "$W" "myrepo/<effort>/"
 
+# --- init ---
+# fresh tree WITHOUT the fixture vault: init must be tested against a clean slate
+ROOT="$(cd "$(mktemp -d)" && pwd -P)"; FAKEHOME="$ROOT/home"; mkdir -p "$FAKEHOME/.claude" "$ROOT/somewhere"
+t "init requires path"                 1 "usage"         "$ROOT/somewhere" init
+t "init creates vault"                 0 "vault created" "$ROOT/somewhere" init "$ROOT/newvault"
+[ -f "$ROOT/newvault/.vault.json" ]           && { PASS=$((PASS+1)); echo "ok   marker exists"; } || { FAIL=$((FAIL+1)); echo "FAIL marker"; }
+[ -x "$ROOT/newvault/_tools/autocommit.sh" ]  && { PASS=$((PASS+1)); echo "ok   autocommit.sh executable"; } || { FAIL=$((FAIL+1)); echo "FAIL autocommit"; }
+[ -d "$ROOT/newvault/.git" ]                  && { PASS=$((PASS+1)); echo "ok   git initialised"; } || { FAIL=$((FAIL+1)); echo "FAIL git"; }
+t "init refuses existing vault"        1 "already"       "$ROOT/somewhere" init "$ROOT/newvault"
+t "init refuses inside existing vault" 1 "already"       "$ROOT/somewhere" init "$ROOT/newvault/sub"
+t "init sibling vault allowed"         0 "vault created" "$ROOT/somewhere" init "$ROOT/othervault"
+t "init prints hook snippet"           0 "PostToolUse"   "$ROOT/somewhere" init "$ROOT/thirdvault"
+
 echo; echo "$PASS passed, $FAIL failed"; [ "$FAIL" -eq 0 ]

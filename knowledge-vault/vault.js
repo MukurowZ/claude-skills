@@ -137,7 +137,54 @@ function cmdResolve(args) {
   }, null, 2) + '\n');
 }
 
+const VAULT_TEMPLATE = { kind: 'claude-vault', namespaces: { default: { roots: ['**'] } } };
+
+const AUTOCOMMIT = `#!/usr/bin/env bash
+# Auto-commit every change in this vault. Intended as a Claude Code PostToolUse hook.
+cd "$(dirname "$0")/.." || exit 0
+git add -A >/dev/null 2>&1
+git diff --cached --quiet || git commit -qm "auto: vault update"
+`;
+
+const README_STUB = `# knowledge vault
+Central store for planning artifacts (specs, plans, maps, handovers) across repos.
+Layout: <namespace>/<repo>/<effort>/ — namespaces and repo->namespace mapping live in .vault.json.
+Edit .vault.json to add namespaces, e.g.:
+  "client-a": { "roots": ["~/freelance/client-a"], "related": ["work"] }
+Managed by the knowledge-vault Claude Code skill (vault.js resolve).
+`;
+
+// Ancestors-only marker walk (target itself, then parents). init uses this instead of
+// searchMarker: the per-level CHILD scan in searchMarker would find sibling vaults and
+// wrongly refuse a legitimate init next to an existing vault.
+function searchMarkerUp(start) {
+  let dir = realpathIfExists(start);
+  for (;;) {
+    if (hasMarker(dir)) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+}
+
+function cmdInit(args) {
+  const target = args[0];
+  if (!target) die('usage: vault.js init <path>');
+  const abs = path.resolve(target);
+  const existing = searchMarkerUp(abs);
+  if (existing) die(`a vault already exists at ${existing} (${path.join(existing, MARKER)})`);
+  fs.mkdirSync(path.join(abs, '_tools'), { recursive: true });
+  fs.writeFileSync(path.join(abs, MARKER), JSON.stringify(VAULT_TEMPLATE, null, 2) + '\n');
+  fs.writeFileSync(path.join(abs, '_tools', 'autocommit.sh'), AUTOCOMMIT, { mode: 0o755 });
+  fs.writeFileSync(path.join(abs, 'README.md'), README_STUB);
+  try { execFileSync('git', ['init', '-q'], { cwd: abs }); } catch { process.stderr.write('warning: git init failed — vault is not version-controlled\n'); }
+  try { fs.mkdirSync(path.dirname(CACHE), { recursive: true }); fs.writeFileSync(CACHE, abs + '\n'); } catch { /* best effort */ }
+  process.stdout.write(`vault created at ${abs}\n\nTo auto-commit vault writes, add this hook to your Claude settings.json:\n` +
+    JSON.stringify({ hooks: { PostToolUse: [{ matcher: 'Write|Edit|Bash', hooks: [{ type: 'command', command: path.join(abs, '_tools', 'autocommit.sh') }] }] } }, null, 2) + '\n');
+}
+
 const [cmd, ...rest] = process.argv.slice(2);
 if (cmd === 'locate') cmdLocate();
 else if (cmd === 'resolve') cmdResolve(rest);
+else if (cmd === 'init') cmdInit(rest);
 else die('usage: vault.js init <path> | locate | resolve [repo-path] [--repo <name>]');
