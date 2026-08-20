@@ -89,7 +89,11 @@ function matchNamespace(cfg, repoPath) {
   let best = null, bestLen = -1, tieWith = null, catchall = null;
   for (const [name, ns] of Object.entries(cfg.namespaces)) {
     for (const r of ns.roots || []) {
-      if (r === '**') { if (catchall === null) catchall = name; continue; }
+      if (r === '**') {
+        if (catchall === null) catchall = name;
+        else if (catchall !== name) die(`two catch-all "**" namespaces: "${catchall}" and "${name}" — keep one`);
+        continue;
+      }
       const root = realpathIfExists(expandTilde(r));
       if (rp === root || rp.startsWith(root + path.sep)) {
         if (root.length > bestLen) { best = name; bestLen = root.length; tieWith = null; }
@@ -109,6 +113,12 @@ function cmdResolve(args) {
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--repo') { repoName = args[++i] || die('--repo needs a value'); }
     else positional.push(args[i]);
+  }
+  if (repoName !== null) {
+    const trimmed = repoName.trim();
+    if (!trimmed || trimmed === '.' || trimmed === '..' || trimmed.includes('/') || trimmed.includes('\\')) {
+      die(`invalid --repo value: ${JSON.stringify(repoName)}`);
+    }
   }
   const repoPath = path.resolve(positional[0] || process.cwd());
   const vault = locate(repoPath);

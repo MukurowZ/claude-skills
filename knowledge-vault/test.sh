@@ -71,6 +71,13 @@ t "resolve equal-prefix tie errors" 1 "ambiguous" "$ROOT/work/repo-a" resolve
 fresh
 node -e "const f='$ROOT/work/vault/.vault.json',c=JSON.parse(require('fs').readFileSync(f)); c.namespaces['work2']={dir:'.',roots:['$ROOT/nowhere']}; require('fs').writeFileSync(f, JSON.stringify(c))"
 t "duplicate namespace dir errors" 1 "share dir" "$ROOT/work/repo-a" resolve
+# two catch-alls -> error
+fresh
+node -e "const f='$ROOT/work/vault/.vault.json',c=JSON.parse(require('fs').readFileSync(f)); c.namespaces['default2']={roots:['**']}; require('fs').writeFileSync(f, JSON.stringify(c))"
+t "two catch-all namespaces error" 1 "catch-all" "$ROOT/work/repo-a" resolve
+# --repo path escape rejected
+fresh
+t "--repo path escape rejected" 1 "invalid --repo" "$ROOT/work/repo-a" resolve --repo ../client-b
 
 # --- resolve: visibility (spec walkthrough cases) ---
 fresh
