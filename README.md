@@ -9,6 +9,7 @@ its own repo so it syncs across every device.
 - **codebase-memory** — quick reference for the codebase-memory-mcp knowledge-graph tools (search_graph, trace_path, Cypher via query_graph); structural code queries in ~500 tokens instead of grep sweeps.
 - **create-branch** — branch named `<type>/<slug>` (conventional-commit types); pushes to its own same-name remote branch, never the base.
 - **create-pull-request** — PR whose base is the branch's real ancestor (reflog / merge-base detected); draft or ready (default ready).
+- **design-views** — four short views (Tree level · Tree stack · System design · Object) in every spec/plan/ticket, sized by concrete big/small triggers (high level first for big work); setup step installs a global CLAUDE.md rule that hooks plugin skills without editing them.
 - **html-to-pug-vue** — convert HTML → Pug with Vue directive support.
 - **knowledge-vault** — bootstrap + resolve a centralized, namespaced planning-artifact vault shared across repos (`vault.js init|locate|resolve`); namespace isolation keeps unrelated clients apart.
 - **opus-worker-fable-advisor** — advisor skill.
