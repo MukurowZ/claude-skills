@@ -14,7 +14,7 @@ Example domain below is fictional (a shop adding place-order). Copy the shape, n
 Count **content lines**: skip blank lines, fences, sub-block labels, table header + separator rows
 and the over-budget marker; `Note:` lines count. Per-type caps count fields, not the header.
 
-| View | Low (small work / one slice) | High (big effort) |
+| View | Detail (small work / one slice) | Outline (big effort) |
 |---|---|---|
 | Tree level | ≤ 30 per entry point, ≤ 60 total; extra entry points one line each | ≤ 12 per entry point |
 | Tree stack | 1 line per NEW/MOD file + folder lines (scales with files — not in Whole) | ≤ 20, module names not paths |
@@ -46,7 +46,7 @@ Node: `Name [layer · NEW|MOD|— · Tn]`, then one-liners for what it **reads**
 callees: one line ending `(—)`. Later-slice hooks: bare marker `seam S3` — the detail lives in the
 Seams table. Boot jobs, migrations and crons are entry points too.
 
-### Low
+### Detail
 
 ```text
 POST /v2/orders/place
@@ -62,7 +62,7 @@ POST /v2/orders/place
 replay(order): owner ≠ caller → KeyReused · else → stored result
 ```
 
-### High
+### Outline
 
 ```text
 POST /v2/orders/place                                       [S1 S2]
@@ -80,7 +80,7 @@ one line `— <n> files untouched`. Drop untouched folders, except one a reader 
 (`— calculate-order/  v1, kept`). A deep
 path may go on the file line (`usecases/create-order/create-order.usecase.ts`). One count line at the end.
 
-### Low
+### Detail
 
 ```text
 src/orders/
@@ -94,7 +94,7 @@ src/orders/
 Count: 7 new, 2 modified (incl. specs). No new collection, topic or env var.
 ```
 
-### High — module names, not paths
+### Outline — module names, not paths
 
 ```text
 orders        MOD  S1 S2   place flow, idempotency
@@ -149,7 +149,7 @@ audit/rate-limit decorators go in Auth.
 Mermaid: a component flowchart only if Stores + Tree level don't already show it; a sequence
 only when concurrency or ordering is the risk.
 
-**High level** keeps Contracts (with a "main errors" column instead of the Errors table),
+**Outline** keeps Contracts (with a "main errors" column instead of the Errors table),
 Stores and one component mermaid; Schemas, Async and Queries become one line each.
 
 ## 4. Object
@@ -164,7 +164,7 @@ Mirror types: one line `X = Y (lineItems → items, Decimal → string)`. Alias/
 Copied type: `X = copy of <source>`.
 Close with `Used as-is: …` (names only).
 
-### Low
+### Detail
 
 ```text
 PlaceOrderRequest            [api · NEW · T6]
@@ -184,7 +184,7 @@ PlaceOrderResult = PlaceOrderResponse
 Used as-is: Cart, PaymentIntent, Store.
 ```
 
-### High — key types, ≤ 5 fields, names only
+### Outline — key types, ≤ 5 fields, names only
 
 ```text
 PlaceOrderRequest   idempotencyKey, cartId, fingerprint, payment

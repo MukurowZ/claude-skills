@@ -17,7 +17,7 @@ prose: a reviewer reads trees and tables, not paragraphs. One fact lives in one 
 
 **Read `views.md` in this directory before writing views** — formats, budgets, cut order, examples.
 
-## Pick the level (no vibes)
+## Pick the depth: outline or detail (no vibes)
 
 **Big** if ANY is true, else **small**:
 
@@ -28,20 +28,20 @@ prose: a reviewer reads trees and tables, not paragraphs. One fact lives in one 
 
 | Work | Write |
 |---|---|
-| small | **low** level only, one pass |
-| big | **high** level first (slices marked *proposed*) → **stop for approval** → **low** per slice |
-| one slice of an approved big effort | **low** only; > 40 files (tests incl.) → say "consider splitting" in chat and a Tree stack `Note:` |
+| small | **detail** only, one pass |
+| big | **outline** first (slices marked *proposed*) → **stop for approval** → **detail** per slice |
+| one slice of an approved big effort | **detail** only; > 40 files (tests incl.) → say "consider splitting" in chat and a Tree stack `Note:` |
 
-High = modules/components, main contracts, key types. No file paths, no full field lists.
-Low = classes/functions, files with task ids, full contracts + errors, all NEW/MOD fields.
+Outline = modules/components, main contracts, key types. No file paths, no full field lists.
+Detail = classes/functions, files with task ids, full contracts + errors, all NEW/MOD fields.
 
 ## Where views live
 
-| Artifact | Level | Location |
+| Artifact | Depth | Location |
 |---|---|---|
-| big effort (spec / map / PRD) | high | `<effort>/design.md`; spec and map link it in one line (maps stay indexes) |
-| plan (slice or small work) | low | `## Design views` at the top of the plan |
-| spec for small work | low | `## Design views` in `spec.md`; the plan links it, never copies |
+| big effort (spec / map / PRD) | outline | `<effort>/design.md`; spec and map link it in one line (maps stay indexes) |
+| plan (slice or small work) | detail | `## Design views` at the top of the plan |
+| spec for small work | detail | `## Design views` in `spec.md`; the plan links it, never copies |
 | ticket / issue | scoped | `## Design views` ≤ 20 lines: what this ticket makes NEW/MOD + links |
 | research / grilling ticket | current system | views of what exists now, or `n/a — <reason>` |
 
@@ -66,15 +66,15 @@ A view that doesn't apply is one line (`Async: none.`). Never pad.
 
 | Skill | Does |
 |---|---|
-| `superpowers:brainstorming` | level rule; big → high views in `design.md` + approval gate before slicing |
-| `mattpocock-skills:wayfinder` | high views in `design.md`; each ticket gets scoped `## Design views` |
+| `superpowers:brainstorming` | depth rule; big → outline views in `design.md` + approval gate before slicing |
+| `mattpocock-skills:wayfinder` | outline views in `design.md`; each ticket gets scoped `## Design views` |
 | `wayfinder-next` | chip prompt tells the session to read/update views |
 | `grill-me`, `grill-with-docs`, `mattpocock-skills:grilling` | each resolved decision that moves a node/row → edit views in place |
-| `to-issues` | big effort needs approved high views first; each issue gets scoped views |
-| `superpowers:writing-plans` | low views at top; Tree stack replaces "File Structure"; rule 6 |
+| `to-issues` | big effort needs approved outline views first; each issue gets scoped views |
+| `superpowers:writing-plans` | detail views at top; Tree stack replaces "File Structure"; rule 6 |
 
-**Approval gate:** after high views, stop and ask. No issues, build tickets or plans until a
-clear yes. Low views are reviewed with the plan, before code.
+**Approval gate:** after outline views, stop and ask. No issues, build tickets or plans until a
+clear yes. Detail views are reviewed with the plan, before code.
 
 ## Setup (once per device)
 
@@ -91,5 +91,5 @@ from this skill.
 | Error codes in tree, contract row and Object | Tree: short exception name; Errors table maps it |
 | Fields of different types on one line to hit the cap | Share a line only for same type + meaning; else flag over budget |
 | `{a,b}.ts`, `…v3.usecase.ts` in Tree stack | Full file names — people grep these |
-| High-level views with file paths | Module names only |
+| Outline views with file paths | Module names only |
 | New `design-v2.md` after review | Edit in place |
