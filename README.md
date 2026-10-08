@@ -14,6 +14,7 @@ its own repo so it syncs across every device.
 - **knowledge-vault** — bootstrap + resolve a centralized, namespaced planning-artifact vault shared across repos (`vault.js init|locate|resolve`); namespace isolation keeps unrelated clients apart.
 - **opus-worker-fable-advisor** — advisor skill.
 - **react-classname-extract** — add a filename-derived semantic root `className` to every React component.
+- **setup-claude-skills** — `/setup-claude-skills`: one-time per-device setup (vault location, design-views rule in `~/.claude/CLAUDE.md`); explores, shows a draft, writes only on yes.
 - **wayfinder-next** — spawn one background task chip per wayfinder ticket (`#RR-LNN-<short title>`), with run-counter allocation, blocker/claim validation, and self-contained kickoff prompts.
 
 ## Third-party skills (not vendored here — installed per-device, always latest)
@@ -33,6 +34,9 @@ One command, no clone needed (published as [`@mukurowz/claude-skills`](https://w
 ```bash
 npx @mukurowz/claude-skills@latest   # copies every skill into ~/.claude/skills/
 ```
+
+Then, once per device, run **`/setup-claude-skills`** in Claude Code — the installer never edits
+`~/.claude/CLAUDE.md` itself, and prints a reminder while setup is pending.
 
 Re-run the same command to upgrade. Skills installed this way are **copies** (the npx
 cache is ephemeral, so symlinks would dangle); a marker file inside each copied dir lets

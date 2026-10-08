@@ -54,8 +54,9 @@ questions from them.
 
 ## No vault yet
 
-If `resolve` exits with "no vault found": offer `node <this-skill-dir>/vault.js init
-<path>` (confirm the path with the user first — the script never prompts). Do NOT fall
+If `resolve` exits with "no vault found": suggest `/setup-claude-skills`, or offer
+`node <this-skill-dir>/vault.js init <path>` directly (confirm the path with the user first —
+the script never prompts). Do NOT fall
 back to writing planning docs into the repo.
 
 If `resolve` says "add a roots entry": show the message verbatim and offer to add the

@@ -25,6 +25,7 @@ npm publish            # publish current working tree to npm as @mukurowz/claude
 1. Add/edit `<skill-name>/SKILL.md` (frontmatter: `name` + `description`; description drives when Claude auto-loads it — see any existing SKILL.md for the pattern of concrete triggers/symptoms).
 2. Put heavy reference material or reusable templates in sibling files under the skill dir (e.g. `amigos/TEMPLATE.md`, `amigos/references/*.md`), not inline in SKILL.md.
    `knowledge-vault/` is the one skill with code (`vault.js`, zero-dep Node) and tests (`npm test` → `knowledge-vault/test.sh`); run `npm test` before publishing whenever it changes.
+   A skill that needs per-device config (a global CLAUDE.md rule, a vault path…) gets a section in `setup-claude-skills/SKILL.md` and tells the user to run `/setup-claude-skills`; installers never write that config, they only print a reminder.
 3. `git add`, commit.
 4. `./install.sh` locally to pick it up; other devices run `git pull && ./install.sh`.
 

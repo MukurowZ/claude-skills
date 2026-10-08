@@ -27,3 +27,9 @@ find "$REPO" -name SKILL.md -not -path '*/.git/*' -print0 | while IFS= read -r -
   ln -sfn "$dir" "$link"
   echo "linked $name -> $dir"
 done
+
+# Per-device config is never written here — /setup-claude-skills asks first. Nudge if undone.
+if ! grep -qs '<!-- design-views:rule -->' "$HOME/.claude/CLAUDE.md"; then
+  echo
+  echo "One-time setup pending: in Claude Code run /setup-claude-skills"
+fi

@@ -78,17 +78,10 @@ clear yes. Low views are reviewed with the plan, before code.
 
 ## Setup (once per device)
 
-Plugin and `npx skills` skills are overwritten on update, so they are hooked by a rule in
-`~/.claude/CLAUDE.md`, never by editing them.
-
-1. Find `<!-- design-views:rule -->` in `~/.claude/CLAUDE.md`.
-2. Missing, or its block differs from `claude-md-rule.md` here → show the block (or the diff)
-   and ask. **Never edit CLAUDE.md without a clear yes.**
-3. On yes: insert the whole block, markers included — after the section that redirects planning
-   artifacts to a vault if there is one, else at the end. Replace an existing marked block in
-   place; never add a second.
-
-Run it when asked, or when this skill loads and the marker is missing (ask once per session).
+The rule that hooks plugin / `npx skills` skills lives in `~/.claude/CLAUDE.md` (block in
+`claude-md-rule.md` here). On load, if `~/.claude/CLAUDE.md` has no `<!-- design-views:rule -->`
+marker, tell the user once per session: **run `/setup-claude-skills`**. Never write that file
+from this skill.
 
 ## Common mistakes
 
