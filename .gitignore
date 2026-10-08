@@ -83,3 +83,8 @@ playground.xcworkspace
 *.moved-aside
 *.xcuserstate
 *.xcscmblueprint
+
+### Claude Code
+# Worktrees and local settings live here — never commit or npm-publish them.
+# npm falls back to .gitignore (no .npmignore), so this also keeps them out of the package.
+.claude/

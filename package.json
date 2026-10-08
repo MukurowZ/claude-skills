@@ -8,7 +8,8 @@
   },
   "scripts": {
     "postinstall": "node bin/install.js",
-    "test": "bash knowledge-vault/test.sh"
+    "test": "bash knowledge-vault/test.sh",
+    "prepublishOnly": "test -z \"$(git status --porcelain)\" || { echo \"refusing to publish: working tree not clean (npm packs it as-is)\"; exit 1; }; npm test"
   },
   "repository": {
     "type": "git",

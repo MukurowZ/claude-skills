@@ -9,7 +9,8 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST="$HOME/.claude/skills"
 mkdir -p "$DEST"
 
-find "$REPO" -name SKILL.md -not -path '*/.git/*' -print0 | while IFS= read -r -d '' skill; do
+# Skip what bin/install.js skips: hidden top-level dirs (.git, .claude/worktrees, …), node_modules, bin.
+find "$REPO" -name SKILL.md -not -path "$REPO/.*" -not -path '*/node_modules/*' -not -path "$REPO/bin/*" -print0 | while IFS= read -r -d '' skill; do
   dir="$(dirname "$skill")"
   name="$(basename "$dir")"
   link="$DEST/$name"
