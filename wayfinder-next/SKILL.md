@@ -112,7 +112,10 @@ Map: <absolute map.md path>
 
 โหมด: Work through the map. ทำ ticket <NN> (<title>) — issues/<NN>-<slug>.md
 ทำตามขั้นตอน wayfinder: claim ticket ก่อนเริ่ม, resolve, record (## Answer + status:resolved + เติม 1 บรรทัดใน map "Decisions so far"), ห้าม resolve เกิน 1 ticket ต่อ session
+Design views: โหลด skill design-views · อ่าน <effort>/design.md (ถ้ามี) · ticket ต้องมี ## Design views ที่ตรงกับคำตอบ — แก้ในที่เดิม ห้ามสร้างไฟล์ใหม่
 ```
+
+The `Design views:` line goes in every chip (see the `design-views` skill): the session keeps the ticket's scoped views and the effort's `design.md` in step with what it decides.
 
 When the ticket is still in the fog (reserved number), say so explicitly instead of the second line's file path:
 

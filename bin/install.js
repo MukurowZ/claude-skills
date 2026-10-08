@@ -80,3 +80,12 @@ if (skills.length === 0) {
 }
 for (const dir of skills.sort()) installOne(dir);
 console.log(`\n${skills.length} skill(s) processed (${copyMode ? 'copy' : 'symlink'} mode) into ${DEST}`);
+
+// Per-device config (global CLAUDE.md rule, vault) is never written by the installer — the
+// /setup-claude-skills skill asks first. Only nudge when that setup looks undone.
+const claudeMd = path.join(os.homedir(), '.claude', 'CLAUDE.md');
+let claudeMdText = '';
+try { claudeMdText = fs.readFileSync(claudeMd, 'utf8'); } catch { /* no global CLAUDE.md yet */ }
+if (!claudeMdText.includes('<!-- design-views:rule -->')) {
+  console.log('\nOne-time setup pending: in Claude Code run /setup-claude-skills');
+}
