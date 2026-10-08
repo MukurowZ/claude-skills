@@ -18,7 +18,7 @@ npm publish            # publish current working tree to npm as @mukurowz/claude
 
 `bin/install.js` is the same logic in Node and is the package's `bin` + `postinstall` entry, so `npx @mukurowz/claude-skills` installs everything automatically. It symlinks when run from a checkout, but **copies** (with a `.installed-by-claude-skills` marker file per dir) when it detects it's running from `node_modules`/the npx cache, because the cache can be pruned and symlinks into it would dangle. On re-run it only replaces dirs carrying that marker or symlinks pointing into this repo — real dirs owned by anything else are skipped. Keep the two installers behaviorally in sync when editing either.
 
-**`npm publish` packs the working tree as-is, not a git commit** — uncommitted or untracked files under a skill dir go out to the public registry. Commit and verify `git status` is clean before publishing.
+**`npm publish` packs the working tree as-is, not a git commit** (a `prepublishOnly` guard refuses a dirty tree; `.claude/` — where Claude Code worktrees live — is gitignored, which also keeps it out of the package) — uncommitted or untracked files under a skill dir go out to the public registry. Commit and verify `git status` is clean before publishing.
 
 ## Adding or editing a skill
 
